@@ -1,0 +1,4 @@
+xp text = "i love Microsoft XP fr";
+rst;
+
+println(text);
