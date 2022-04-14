@@ -13,5 +13,6 @@ int main(int argc, char **argv){
     while ((token = lexer_get_next_token(lexer)) != nullptr){
         std::cout << "TOKEN(" << token->type << " , " << token->value << ")" << std::endl;
     }
+    free(token);
     return 0;
 }
