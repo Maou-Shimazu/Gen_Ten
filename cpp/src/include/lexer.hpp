@@ -2,7 +2,7 @@
 #define LEXER_HPP
 
 #include "token.hpp"
-#include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 struct LEXER_T {
@@ -58,7 +58,7 @@ TOKEN_T* lexer_collect_string(LEXER_T* lexer){
     while (lexer->current_char != '"'){
         char* string = lexer_get_current_char_as_string(lexer); // get the array of the current characters aka as a string
         value = (char*)realloc(value, (strlen(value) + strlen(string) + 1) * sizeof(char)); // reallocate to value, the length of value plus the length of the string plus 1 times the size of character
-        strcat(value, string); // concatenate value and string
+        strcat_s(value, sizeof(string), string); // concatenate value and string //note: [strcat(value, string)]
         lexer_advance(lexer); // advance the lexer twice more
     }
 
@@ -74,7 +74,7 @@ TOKEN_T* lexer_collect_id(LEXER_T* lexer){
     while (isalnum(lexer->current_char)){ // while the current character is alphanumeric
         char* string = lexer_get_current_char_as_string(lexer); // get the characters as a string
         value = (char*)realloc(value, (strlen(value) + strlen(string) + 1) * sizeof(char)); // reallocate value
-        strcat(value, string); // concat
+        strcat_s(value, sizeof(string), string); // concat //note: [strcat(value, string)]
         lexer_advance(lexer); // advance
     }
     lexer_advance(lexer);
