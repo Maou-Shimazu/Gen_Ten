@@ -25,7 +25,10 @@ void parser_eat(PARSER_T* parser, int token_type){
 }
 
 AST_T* parser_parse_statement(PARSER_T* parser){
-
+    switch (parser->current_token->type) {
+        case TOKEN_IDENTIFIER: return parser_parse_identifier(parser); 
+        
+    }
 }
 
 AST_T* parser_parse_statements(PARSER_T* parser){
@@ -76,5 +79,23 @@ AST_T* parser_parse_variable(PARSER_T* parser){
 AST_T* parser_parse_string(PARSER_T* parser){
 
 }
+
+AST_T* parser_parse_identifier(PARSER_T* parser) {
+    if (strcmp(parser->current_token->value, "var") == 0) {
+        return parser_parse_variable_definition();
+    } else {
+        return parser_parse_variable(parser);
+    }
+}
+
+AST_T* parser_parse_variable_definition(PARSER_T* parser) [
+    parser_eat(parser, TOKEN_IDENTIFIER); //var
+    char* variable_name = parser->current_token->value; 
+    parser_eat(parser, TOKEN_IDENTIFIER);
+    parser_eat(parser,TOKEN_EQUALS);
+    AST_T* variable_value = parser_parse_expr(parser);
+
+    AST_T* variable_definition = ast_init(AST_VARIABLE_DEFINITION); 
+]
 
 #endif
