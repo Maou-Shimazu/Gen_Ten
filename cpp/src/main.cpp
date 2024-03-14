@@ -4,15 +4,15 @@
 #include <fstream>
 
 #include "include/lexer.hpp"
+#include "include/parser.hpp"
 
 int main(int argc, char **argv){
     char text[] = "xp text = \"MXP\"; \n xp anotherTest = \"more MXP\"; ";
     LEXER_T* lexer = lexer_init(text);
 
-    TOKEN_T* token = nullptr;
-    while ((token = lexer_get_next_token(lexer)) != nullptr){
-        std::cout << "TOKEN(" << token->type << " , " << token->value << ")" << std::endl;
-    }
-    free(token);
+    PARSER_T* parser = parser_init(lexer);
+    AST_T* root = parser_parse(parser);
+
+    std::cout << root->type;
     return 0;
 }

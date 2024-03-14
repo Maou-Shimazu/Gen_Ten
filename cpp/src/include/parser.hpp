@@ -1,6 +1,6 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
-
+#include <string>
 #include "AST.hpp"
 #include "lexer.hpp"
 
@@ -57,7 +57,9 @@ AST_T* parser_parse(PARSER_T* parser){
 }
 
 AST_T* parser_parse_expr(PARSER_T* parser){
-
+    switch(parser->current_token->type) {
+        case TOKEN_STRING: return parser_parse_string(parser); 
+    }
 }
 
 AST_T* parser_parse_factor(PARSER_T* parser){
@@ -73,16 +75,30 @@ AST_T* parser_parse_function_call(PARSER_T* parser){
 }
 
 AST_T* parser_parse_variable(PARSER_T* parser){
+    char* token_value = parser->current_token->value;
+    parser_eat(parser, TOKEN_IDENTIFIER); // var name or function call name 
+    if (parser->current_token->type = TOKEN_LPAREN)
+        return parser_parse_function_call(parser);
+
+    AST_T* ast_variable = ast_init(AST_VARIABLE);
+    ast_variable->variable_name = token_value;
+
+    return ast_variable;
 
 }
 
 AST_T* parser_parse_string(PARSER_T* parser){
+    AST_T* ast_string = ast_init(AST_STRING);
+    ast_string->string_value = parser->current_token->value;
 
+    parser_eat(parser, TOKEN_STRING);
+
+    return ast_string;
 }
 
 AST_T* parser_parse_identifier(PARSER_T* parser) {
     if (strcmp(parser->current_token->value, "var") == 0) {
-        return parser_parse_variable_definition();
+        return parser_parse_variable_definition(parser);
     } else {
         return parser_parse_variable(parser);
     }
@@ -90,12 +106,16 @@ AST_T* parser_parse_identifier(PARSER_T* parser) {
 
 AST_T* parser_parse_variable_definition(PARSER_T* parser) [
     parser_eat(parser, TOKEN_IDENTIFIER); //var
-    char* variable_name = parser->current_token->value; 
+    char* variable_definition_variable_name = parser->current_token->value; 
     parser_eat(parser, TOKEN_IDENTIFIER);
-    parser_eat(parser,TOKEN_EQUALS);
-    AST_T* variable_value = parser_parse_expr(parser);
+    parser_eat(parser, TOKEN_EQUALS);
+    AST_T* variable_definition_value = parser_parse_expr(parser);
 
-    AST_T* variable_definition = ast_init(AST_VARIABLE_DEFINITION); 
+    AST_T* variable_definition = ast_init(AST_VARIABLE_DEFINITION);
+    variable_definition->variable_definition_variable_name = variable_definition_variable_name;
+    variable_definition->variable_definition_value = variable_definition_value;
+
+    return variable_definition;
 ]
 
 #endif
