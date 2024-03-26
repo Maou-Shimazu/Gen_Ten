@@ -7,18 +7,23 @@
 struct PARSER_T {
     LEXER_T* lexer;
     TOKEN_T* current_token;
+    TOKEN_T* prev_token;
 };
 
 PARSER_T* parser_init(LEXER_T* lexer){
     PARSER_T* parser = (PARSER_T*)calloc(1, sizeof(PARSER_T));
     parser->lexer = lexer;
     parser->current_token = lexer_get_next_token(lexer);
+    parser->prev_token = parser->current_token;
+    
     return parser;
 }
 
 void parser_eat(PARSER_T* parser, int token_type){
-     if(parser->current_token->type == token_type)
+     if(parser->current_token->type == token_type) {
+        parser->prev_token = parser->current_token;
          parser->current_token = lexer_get_next_token(parser->lexer);
+     }
      else std::cout << "Unexpexted token: " 
                     << parser->current_token->value << ", with type: " 
                     << parser->current_token->type << std::endl;
@@ -72,6 +77,21 @@ AST_T* parser_parse_term(PARSER_T* parser){
 
 AST_T* parser_parse_function_call(PARSER_T* parser){
 
+    AST_T* function_call = ast_init(AST_FUNCTION_CALL);
+    function_call->function_call_name = parser->prev_token->value;
+
+    function_call->function_call_arguments = calloc(1, sizeof(AST_STRCUT*));
+
+    AST_T* ast_expr = parser_parse_statement(parser);
+    compound->compound_value[0] = ast_statement;
+
+    while (parser->current_token->type == TOKEN_SEMI){
+        parser_eat(parser, TOKEN_SEMI);
+
+        AST_T* ast_statement = parser_parse_statement(parser);
+        compound->compound_size += 1;
+        compound->compound_value = realloc(compound->compound_value, compound_size * sizeof())
+    }
 }
 
 AST_T* parser_parse_variable(PARSER_T* parser){
